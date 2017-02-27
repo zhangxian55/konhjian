@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, width=device-width">
+	<title>控制条</title>
+  <link rel="stylesheet" type="text/css" href="css/control.css">
+  <script src="icon/iconfont.js"></script>
+  <script src="js/zepto.min.js"></script>
+</head>
+<body>
+  <video width="100%" height="100%" src="video/yoga.mp4" id="video1">
+  </video>
+	<div class="control">
+       <span class="mask"></span> 
+		   <button class="pause" >
+		   	  <svg class="icon pause-icon" aria-hidden="true">
+                  <use xlink:href="#icon-iconfontplay2"></use>
+           </svg>
+   
+		   </button>
+		   <button class="close">
+		   	     <svg class="icon close-icon" aria-hidden="true">
+                  <use xlink:href="#icon-back"></use>
+              </svg>
+		   </button>
+		   <span class="jindu">
+           <span class="shijian"></span>
+		   	   <span class="jinduyanse"></span>
+           <div class="quanping">
+               <svg class="icon top-icon" aria-hidden="true">
+                    <use xlink:href="#icon-less"></use>
+               </svg>
+               <svg class="icon down-icon" aria-hidden="true">
+                    <use xlink:href="#icon-moreunfold"></use>
+               </svg>
+               <svg class="icon left-icon" aria-hidden="true">
+                    <use xlink:href="#icon-less"></use>
+               </svg>
+               <svg class="icon right-icon" aria-hidden="true">
+                    <use xlink:href="#icon-moreunfold"></use>
+              </svg>
+           </div>
+	     </span>
+  </div>
+</body>
+<script type="text/javascript">
+/*交互效果*/
+  var video=document.getElementById('video1');
+    $('.pause-icon').click(function(){
+        $('.control').css('display',"none");
+        video.play();
+    }) ;
+
+    $('#video1').click(function(){
+      $('.pause-icon').css('display',"block"); 
+      $('button.play').css('display',"none");
+       palypause();        
+     }) ;
+/*播放函数*/
+    function palypause(){
+          if(video.paused){
+             video.play()
+            }else{
+              video.pause();
+              $('.control').css('display',"block");
+            }
+       }
+/*控制样式函数*/
+  function cssstyle(){
+        var videoheight=$("#video1").height();
+        var gao=videoheight*0.1;
+        $('.pause').css("height",videoheight)
+        $('.jindu').css({"height":gao+"px",'top':(videoheight-gao)+"px"});
+        $('.mask').css("height",gao+"px");
+        $('.tuozhuai').css("height",gao+"px");
+  }
+var w=window.screen.width;
+/*加载完成后*/
+window.onload=function(){
+/*获得视频长短*/
+   alltime=video.duration;
+  var fenzhong=parseInt(alltime/60)<10?"0"+parseInt(alltime/60):parseInt(alltime/60);
+  var miao=parseInt(alltime%60)<10?"0"+parseInt(alltime%60):parseInt(alltime%60);
+/*加载样式*/ 
+    cssstyle();
+/*屏幕改变时调用样式函数 */
+    window.onresize=function(){
+      cssstyle();
+    }
+      ;
+/*视频长度定时器*/
+  setInterval(function(){
+        var nowtime= video.currentTime;
+        var nowfenzhong=parseInt(nowtime/60)<10?"0"+parseInt(nowtime/60):parseInt(nowtime/60);
+        var nowmiao=parseInt(nowtime%60)<10?"0"+parseInt(nowtime%60):parseInt(nowtime%60);
+        var rate=nowtime/alltime;
+        /*进度条变色*/
+        $('.jinduyanse').css('width',w*rate);
+        /*已播放时间*/
+        $('.shijian').html(nowfenzhong+":"+nowmiao+"/"+fenzhong+":"+miao);
+   },100) 
+} 
+/* 进度条滑动事件*/
+    $(document).on("touchmove",function(event){
+      var finger = event.touches[0];
+      /* 滑块左边距*/
+      dX = finger.clientX;
+      $('.jinduyanse').css('width',dX+"px");
+      /*  滑动后时长*/
+       var  nowtime=dX/w*alltime;
+       video.currentTime=nowtime;
+      /* 改变进度条*/
+      $('.jinduyanse').css('width',dX+"px");
+})
+</script>
+</html>
